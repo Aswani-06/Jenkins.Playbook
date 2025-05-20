@@ -1,0 +1,25 @@
+---
+- hosts: dev
+  connection: ssh
+
+  tasks:
+   - name: getting jenkins link from google
+     get_url:
+       url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+       dest: /etc/yum.repos.d/jenkins.repo
+
+
+   - name: import key from jenkins.io
+     ansible.builtin.rpm_key:
+       state:present
+       key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+   - name: install java-11
+     command: amazon-linux-extras install java-openjdk11 -y
+
+   - name: install jenkins
+     action: yum name=jenkins state=present
+
+  
+   - name: restart jenkins
+     service: name=jenkins state=restarted
